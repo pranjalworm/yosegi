@@ -1,2 +1,3 @@
-# focus
-An image processing application
+# Stitcher
+
+An application to create a photo collage which resembles a given target image.
