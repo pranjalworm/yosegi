@@ -7,13 +7,10 @@ type Pixel struct {
 	Alpha uint32
 }
 
-type GridBlockPixel struct {
-	Pixel Pixel
-}
-
 type AveragedImageData struct {
-	Width          int
-	Height         int
-	Format         string
-	GridBlockPixel []GridBlockPixel
+	ImageName   string
+	Orientation string // "portrait" | "landscape"
+	Width       int
+	Height      int
+	Pixel       []Pixel
 }

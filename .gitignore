@@ -33,5 +33,6 @@
 
 .DS_Store
 
-images/*.*
-output/*.*
+images/target/*.*
+images/collections/**
+output/**

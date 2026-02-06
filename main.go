@@ -6,24 +6,36 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/pranjalworm/stitch/imager"
+	"github.com/pranjalworm/stitch/models"
 	"github.com/pranjalworm/stitch/utils"
 )
 
 func main() {
 
+	defer utils.TrackTime("main")()
 	imageName := os.Args[1]
 	divisionFactor := os.Args[2]
+	collectionName := os.Args[3]
 
-	num, err := strconv.Atoi(divisionFactor)
+	imageDivisionFactor, err := strconv.Atoi(divisionFactor)
 	if err != nil {
 		panic(err)
-
 	}
 
-	imageDivisionFactor := num
-	imagePath := "./images/" + imageName + ".jpg"
+	collectionChannel := make(chan []models.AveragedImageData)
 
-	// read and analyse image
-	imageData := utils.AnalyseImage(imagePath, imageDivisionFactor)
-	utils.CreateImage(imageData, imageDivisionFactor)
+	collectionPath := "./images/collections/" + collectionName + "/"
+	go imager.ReadCollection(collectionPath, collectionChannel)
+
+	targetImageChannel := make(chan *models.AveragedImageData)
+
+	go imager.ReadTargetImage(imageName, imageDivisionFactor, targetImageChannel)
+
+	targetImage := <-targetImageChannel
+
+	resultImageCollection := imager.MapCollectionToTarget(targetImage, <-collectionChannel, imageDivisionFactor)
+
+	imager.CreateCollage(resultImageCollection, collectionPath, targetImage, imageDivisionFactor)
+
 }
