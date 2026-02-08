@@ -35,6 +35,7 @@ func ReadCollection(collectionPath string, collectionChannel chan<- []models.Ave
 	var mu sync.Mutex
 
 	for _, file := range files {
+		// filter out non-image files
 		ext := strings.ToLower(filepath.Ext(file.Name()))
 		if ext != ".jpg" && ext != ".jpeg" && ext != ".png" {
 			continue
@@ -55,6 +56,7 @@ func ReadCollection(collectionPath string, collectionChannel chan<- []models.Ave
 	wg.Wait()
 
 	collectionChannel <- imageArr
+	close(collectionChannel)
 }
 
 func analyseAndAverageOut(img image.Image, imageName string, imageDivisionFactor int) models.AveragedImageData {
