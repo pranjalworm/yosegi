@@ -37,7 +37,7 @@ func CreateCollage(resultImageCollection []string, collectionPath string, target
 		draw.Draw(collage, img.Bounds().Add(offset), img, image.Point{}, draw.Src)
 	}
 
-	file, err := os.Create("output/output" + time.Now().String() + ".png")
+	file, err := os.Create("images/output/output" + time.Now().String() + ".png")
 
 	if err != nil {
 		panic(err)
