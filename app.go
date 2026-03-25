@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"image"
-	"image/png"
+	"image/jpeg"
 	"log"
 	"os"
 	"path/filepath"
@@ -131,9 +131,9 @@ func (a *App) GetImagePreview(filePath string) (string, error) {
 	}
 
 	var buf strings.Builder
-	buf.WriteString("data:image/png;base64,")
+	buf.WriteString("data:image/jpeg;base64,")
 	encoder := base64.NewEncoder(base64.StdEncoding, &buf)
-	if err := png.Encode(encoder, preview); err != nil {
+	if err := jpeg.Encode(encoder, preview, &jpeg.Options{Quality: 90}); err != nil {
 		return "", err
 	}
 	encoder.Close()
@@ -196,7 +196,7 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 	logger.Printf("  Build collage:          %s", time.Since(stepStart))
 
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
-	outputFileName := fmt.Sprintf("stitch_%s.png", timestamp)
+	outputFileName := fmt.Sprintf("stitch_%s.jpg", timestamp)
 	outputPath := filepath.Join(outputDir, outputFileName)
 
 	outFile, err := os.Create(outputPath)
@@ -208,10 +208,10 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Encoding output...")
 
 	stepStart = time.Now()
-	if err := png.Encode(outFile, collage); err != nil {
-		return nil, fmt.Errorf("failed to encode PNG: %w", err)
+	if err := jpeg.Encode(outFile, collage, &jpeg.Options{Quality: 90}); err != nil {
+		return nil, fmt.Errorf("failed to encode JPEG: %w", err)
 	}
-	logger.Printf("  Encode PNG:             %s", time.Since(stepStart))
+	logger.Printf("  Encode JPEG:            %s", time.Since(stepStart))
 
 	elapsed := time.Since(start)
 	logger.Printf("  TOTAL:                  %s", elapsed)
