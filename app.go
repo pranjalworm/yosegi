@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -142,22 +143,38 @@ func (a *App) GetImagePreview(filePath string) (string, error) {
 
 // GenerateCollage runs the full mosaic generation pipeline.
 func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDir string, divisionFactor int) (*GenerateResult, error) {
+	logFile, err := os.OpenFile(filepath.Join(outputDir, "stitch_perf.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create log file: %w", err)
+	}
+	defer logFile.Close()
+	logger := log.New(logFile, "", 0)
+
 	start := time.Now()
+	logger.Printf("=== Run started at %s ===", start.Format(time.RFC3339))
+	logger.Printf("divisionFactor=%d, collection=%s", divisionFactor, collectionPath)
 
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Reading target image...")
 
+	stepStart := time.Now()
 	targetImg, err := readImageFile(targetPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read target image: %w", err)
 	}
+	logger.Printf("  Read target image:      %s", time.Since(stepStart))
+
+	stepStart = time.Now()
 	targetData := analyseImage(targetImg, "target", divisionFactor)
+	logger.Printf("  Analyse target image:   %s", time.Since(stepStart))
 
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Analyzing collection images...")
 
+	stepStart = time.Now()
 	collectionData, err := readCollection(collectionPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read collection: %w", err)
 	}
+	logger.Printf("  Read collection (%d images): %s", len(collectionData), time.Since(stepStart))
 
 	if len(collectionData) == 0 {
 		return nil, fmt.Errorf("no valid images found in collection directory")
@@ -165,14 +182,18 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Matching images to target grid...")
 
+	stepStart = time.Now()
 	resultNames := mapCollectionToTarget(&targetData, collectionData, divisionFactor)
+	logger.Printf("  Map collection to target: %s", time.Since(stepStart))
 
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Building collage...")
 
+	stepStart = time.Now()
 	collage, err := buildCollage(resultNames, collectionPath, &targetData, divisionFactor)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build collage: %w", err)
 	}
+	logger.Printf("  Build collage:          %s", time.Since(stepStart))
 
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
 	outputFileName := fmt.Sprintf("stitch_%s.png", timestamp)
@@ -186,11 +207,16 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Encoding output...")
 
+	stepStart = time.Now()
 	if err := png.Encode(outFile, collage); err != nil {
 		return nil, fmt.Errorf("failed to encode PNG: %w", err)
 	}
+	logger.Printf("  Encode PNG:             %s", time.Since(stepStart))
 
 	elapsed := time.Since(start)
+	logger.Printf("  TOTAL:                  %s", elapsed)
+	logger.Println()
+
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Done!")
 
 	return &GenerateResult{

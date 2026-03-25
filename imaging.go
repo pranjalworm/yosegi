@@ -52,7 +52,7 @@ func analyseImage(img image.Image, name string, divisionFactor int) models.Avera
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			r, g, b, a := img.At(x, y).RGBA()
+			r, g, b, _ := img.At(x, y).RGBA()
 			row := min(y/yBlock, maxRow)
 			col := min(x/xBlock, maxCol)
 			idx := divisionFactor*row + col
@@ -60,7 +60,6 @@ func analyseImage(img image.Image, name string, divisionFactor int) models.Avera
 			data.Pixel[idx].Red += uint32(r / BitFactor)
 			data.Pixel[idx].Green += uint32(g / BitFactor)
 			data.Pixel[idx].Blue += uint32(b / BitFactor)
-			data.Pixel[idx].Alpha += uint32(a / BitFactor)
 		}
 	}
 
@@ -69,7 +68,6 @@ func analyseImage(img image.Image, name string, divisionFactor int) models.Avera
 		data.Pixel[i].Red /= blockPixelCount
 		data.Pixel[i].Green /= blockPixelCount
 		data.Pixel[i].Blue /= blockPixelCount
-		data.Pixel[i].Alpha /= blockPixelCount
 	}
 
 	return data
@@ -110,28 +108,49 @@ func readCollection(dirPath string) ([]models.AveragedImageData, error) {
 	return result, nil
 }
 
+func filterByOrientation(collection []models.AveragedImageData, orientation string) []models.AveragedImageData {
+	filtered := make([]models.AveragedImageData, 0, len(collection))
+	for _, c := range collection {
+		if c.Orientation == orientation {
+			filtered = append(filtered, c)
+		}
+	}
+	return filtered
+}
+
 func mapCollectionToTarget(target *models.AveragedImageData, collection []models.AveragedImageData, divisionFactor int) []string {
+	filtered := filterByOrientation(collection, target.Orientation)
 	result := make([]string, divisionFactor*divisionFactor)
 
+	var wg sync.WaitGroup
 	for i, pixel := range target.Pixel {
-		var minDiff uint32 = ^uint32(0)
-		var bestName string
+		wg.Add(1)
+		go func(idx int, px models.Pixel) {
+			defer wg.Done()
+			var minDiff uint32 = ^uint32(0)
+			var bestName string
 
-		for _, cImg := range collection {
-			if target.Orientation != cImg.Orientation {
-				continue
+			for _, cImg := range filtered {
+				cp := cImg.Pixel[0]
+				d := absDiff(px.Red, cp.Red)
+				if d >= minDiff {
+					continue
+				}
+				d += absDiff(px.Green, cp.Green)
+				if d >= minDiff {
+					continue
+				}
+				d += absDiff(px.Blue, cp.Blue)
+				if d < minDiff {
+					minDiff = d
+					bestName = cImg.ImageName
+				}
 			}
-			cp := cImg.Pixel[0]
-			diff := absDiff(pixel.Red, cp.Red) + absDiff(pixel.Green, cp.Green) +
-				absDiff(pixel.Blue, cp.Blue) + absDiff(pixel.Alpha, cp.Alpha)
-
-			if diff < minDiff {
-				minDiff = diff
-				bestName = cImg.ImageName
-			}
-		}
-		result[i] = bestName
+			result[idx] = bestName
+		}(i, pixel)
 	}
+
+	wg.Wait()
 	return result
 }
 
@@ -158,27 +177,39 @@ func absDiff(a, b uint32) uint32 {
 }
 
 func buildCollage(imageNames []string, dirPath string, target *models.AveragedImageData, divisionFactor int) (*image.RGBA, error) {
-	images := make([]image.Image, len(imageNames))
-	var wg sync.WaitGroup
-	var loadErr error
-	var mu sync.Mutex
+	collageWidth := target.Width - (target.Width % divisionFactor)
+	collageHeight := target.Height - (target.Height % divisionFactor)
+	cellW := collageWidth / divisionFactor
+	cellH := collageHeight / divisionFactor
 
-	for i, name := range imageNames {
+	// Collect unique image names.
+	uniqueNames := make(map[string]struct{})
+	for _, name := range imageNames {
+		uniqueNames[name] = struct{}{}
+	}
+
+	// Read and resize each unique image once, in parallel.
+	resizedCache := make(map[string]*image.RGBA, len(uniqueNames))
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var loadErr error
+
+	for name := range uniqueNames {
 		wg.Add(1)
-		go func(idx int, fileName string) {
+		go func(fileName string) {
 			defer wg.Done()
-			imgPath := filepath.Join(dirPath, fileName)
-			img, err := readImageFile(imgPath)
+			img, err := readImageFile(filepath.Join(dirPath, fileName))
 			if err != nil {
 				mu.Lock()
 				loadErr = err
 				mu.Unlock()
 				return
 			}
+			resized := resizeImage(img, cellW, cellH)
 			mu.Lock()
-			images[idx] = img
+			resizedCache[fileName] = resized
 			mu.Unlock()
-		}(i, name)
+		}(name)
 	}
 
 	wg.Wait()
@@ -186,17 +217,12 @@ func buildCollage(imageNames []string, dirPath string, target *models.AveragedIm
 		return nil, loadErr
 	}
 
-	collageWidth := target.Width - (target.Width % divisionFactor)
-	collageHeight := target.Height - (target.Height % divisionFactor)
-
-	cellW := collageWidth / divisionFactor
-	cellH := collageHeight / divisionFactor
+	// Compose the collage from cached resized tiles.
 	collage := image.NewRGBA(image.Rect(0, 0, collageWidth, collageHeight))
-
-	for i, img := range images {
+	for i, name := range imageNames {
 		col := i % divisionFactor
 		row := i / divisionFactor
-		resized := resizeImage(img, cellW, cellH)
+		resized := resizedCache[name]
 		offset := image.Pt(col*cellW, row*cellH)
 		draw.Draw(collage, resized.Bounds().Add(offset), resized, image.Point{}, draw.Src)
 	}
