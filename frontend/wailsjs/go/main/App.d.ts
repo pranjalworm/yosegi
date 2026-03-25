@@ -4,7 +4,7 @@ import {main} from '../models';
 
 export function CountCollectionImages(arg1:string):Promise<number>;
 
-export function GenerateCollage(arg1:string,arg2:string,arg3:string,arg4:number):Promise<main.GenerateResult>;
+export function GenerateCollage(arg1:string,arg2:string,arg3:string,arg4:number,arg5:number):Promise<main.GenerateResult>;
 
 export function GetDefaultOutputPath():Promise<string>;
 

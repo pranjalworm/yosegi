@@ -176,11 +176,25 @@ func absDiff(a, b uint32) uint32 {
 	return b - a
 }
 
-func buildCollage(imageNames []string, dirPath string, target *models.AveragedImageData, divisionFactor int) (*image.RGBA, error) {
-	collageWidth := target.Width - (target.Width % divisionFactor)
-	collageHeight := target.Height - (target.Height % divisionFactor)
-	cellW := collageWidth / divisionFactor
-	cellH := collageHeight / divisionFactor
+func buildCollage(imageNames []string, dirPath string, target *models.AveragedImageData, divisionFactor int, tileSize int) (*image.RGBA, error) {
+	cellW := (target.Width - (target.Width % divisionFactor)) / divisionFactor
+	cellH := (target.Height - (target.Height % divisionFactor)) / divisionFactor
+
+	// Scale cells so the long side matches the requested tileSize.
+	if cellW >= cellH {
+		if cellW != tileSize {
+			cellH = cellH * tileSize / cellW
+			cellW = tileSize
+		}
+	} else {
+		if cellH != tileSize {
+			cellW = cellW * tileSize / cellH
+			cellH = tileSize
+		}
+	}
+
+	collageWidth := cellW * divisionFactor
+	collageHeight := cellH * divisionFactor
 
 	// Collect unique image names.
 	uniqueNames := make(map[string]struct{})

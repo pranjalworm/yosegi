@@ -22,6 +22,7 @@ const targetPath = ref("");
 const collectionPath = ref("");
 const outputPath = ref("");
 const divisionFactor = ref(100);
+const tileSize = ref(150);
 const collectionCount = ref(0);
 const targetPreview = ref("");
 const resultPreview = ref("");
@@ -128,6 +129,7 @@ async function generate() {
       collectionPath.value,
       outputPath.value,
       divisionFactor.value,
+      tileSize.value,
     );
     if (result) {
       resultPath.value = result.outputPath;
@@ -193,6 +195,20 @@ async function generate() {
               >{{ divisionFactor }} x {{ divisionFactor }} =
               {{ divisionFactor * divisionFactor }} tiles</span
             >
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Tile Quality</label>
+          <div class="grid-input">
+            <input
+              v-model.number="tileSize"
+              type="range"
+              min="30"
+              max="300"
+              step="10"
+            />
+            <span class="grid-hint">{{ tileSize }}px</span>
           </div>
         </div>
 

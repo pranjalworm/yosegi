@@ -142,7 +142,7 @@ func (a *App) GetImagePreview(filePath string) (string, error) {
 }
 
 // GenerateCollage runs the full mosaic generation pipeline.
-func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDir string, divisionFactor int) (*GenerateResult, error) {
+func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDir string, divisionFactor int, tileSize int) (*GenerateResult, error) {
 	logFile, err := os.OpenFile(filepath.Join(outputDir, "stitch_perf.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create log file: %w", err)
@@ -189,7 +189,7 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 	wailsRuntime.EventsEmit(a.ctx, "progress", "Building collage...")
 
 	stepStart = time.Now()
-	collage, err := buildCollage(resultNames, collectionPath, &targetData, divisionFactor)
+	collage, err := buildCollage(resultNames, collectionPath, &targetData, divisionFactor, tileSize)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build collage: %w", err)
 	}

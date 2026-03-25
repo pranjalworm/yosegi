@@ -20,9 +20,9 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:     "Stitch",
 		Width:     960,
-		Height:    640,
+		Height:    700,
 		MinWidth:  800,
-		MinHeight: 560,
+		MinHeight: 700,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

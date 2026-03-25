@@ -6,8 +6,8 @@ export function CountCollectionImages(arg1) {
   return window['go']['main']['App']['CountCollectionImages'](arg1);
 }
 
-export function GenerateCollage(arg1, arg2, arg3, arg4) {
-  return window['go']['main']['App']['GenerateCollage'](arg1, arg2, arg3, arg4);
+export function GenerateCollage(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['App']['GenerateCollage'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function GetDefaultOutputPath() {
