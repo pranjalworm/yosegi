@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
 import {
   SelectTargetImage,
   SelectCollectionDirectory,
@@ -136,6 +136,7 @@ async function generate() {
       timeTaken.value = result.timeTaken;
       const preview = await GetImagePreview(result.outputPath);
       resultPreview.value = preview;
+      await nextTick();
     }
   } catch (e: any) {
     errorMessage.value = String(e);
@@ -187,9 +188,10 @@ async function generate() {
           <div class="grid-input">
             <input
               v-model.number="divisionFactor"
-              type="number"
+              type="range"
               min="2"
               max="100"
+              step="5"
             />
             <span class="grid-hint"
               >{{ divisionFactor }} x {{ divisionFactor }} =
@@ -226,11 +228,19 @@ async function generate() {
 
     <div class="preview-panel">
       <ImagePreview v-if="resultPreview" :src="resultPreview" label="Result" />
-      <ImagePreview
-        v-else-if="targetPreview"
-        :src="targetPreview"
-        label="Target"
-      />
+      <template v-else-if="targetPreview">
+        <div class="mosaic-wrapper">
+          <ImagePreview :src="targetPreview" label="Target" />
+          <div v-if="isProcessing" class="mosaic-overlay">
+            <div
+              v-for="i in 64"
+              :key="i"
+              class="mosaic-tile"
+              :style="{ animationDelay: `${(i - 1) * 50}ms` }"
+            />
+          </div>
+        </div>
+      </template>
       <div v-else class="preview-empty">
         <p>Select a target image to preview</p>
       </div>
@@ -360,7 +370,8 @@ async function generate() {
   overflow: hidden;
 }
 
-.preview-panel > :deep(.preview) {
+.preview-panel > :deep(.preview),
+.preview-panel > .mosaic-wrapper {
   flex: 1;
 }
 
@@ -374,6 +385,44 @@ async function generate() {
 .preview-empty p {
   color: var(--text-secondary);
   font-size: 14px;
+}
+
+.mosaic-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mosaic-wrapper > :deep(.preview) {
+  flex: 1;
+}
+
+.mosaic-overlay {
+  position: absolute;
+  inset: 0;
+  top: 22px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.mosaic-tile {
+  background: var(--bg-secondary);
+  opacity: 1;
+  animation: tile-reveal 0.4s ease-out forwards;
+}
+
+@keyframes tile-reveal {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .result-info {
