@@ -1,39 +1,47 @@
 # Stitch
 
-A Go application that creates a photo collage resembling a given target image by stitching together images from a collection based on average color matching.
+A desktop application that creates photo mosaics — collages that resemble a target image, built from your own image collection. Powered by Go + Wails with a Vue.js frontend.
 
 ## How It Works
 
-1. Divides the target image into an N×N grid and calculates the average color of each cell
-2. Analyzes all images in a collection directory for their average color
-3. Maps each grid cell to the closest-matching collection image
-4. Stitches the matched images together into a final collage
+1. Select a target image and a folder of collection images
+2. The app divides the target into an N×N grid and calculates the average color of each cell
+3. Each grid cell is matched to the collection image with the closest average color
+4. The matched images are stitched together into a final mosaic
 
-## Usage
+## Getting Started
+
+### Prerequisites
+
+- Go 1.25+
+- Node.js 20+
+- [Wails CLI](https://wails.io/docs/gettingstarted/installation) v2
+
+### Development
 
 ```bash
-go run main.go <imageName> <divisionFactor> <collectionName>
+wails dev
 ```
 
-- `imageName` — name of the target image (without `.jpg` extension), placed in `./images/target/`
-- `divisionFactor` — grid size (e.g., `10` creates a 10×10 grid)
-- `collectionName` — directory name under `./images/collections/` containing the source images
+### Build
 
-Output is saved as a timestamped PNG in `./images/output/`.
+```bash
+wails build
+```
+
+The built app is output to `build/bin/Stitch.app` on macOS.
 
 ## Project Structure
 
 ```
-imager/       # Core image processing (reading, matching, collage creation)
-models/       # Data structures (Pixel, AveragedImageData)
-utils/        # Performance tracking helpers
-images/
-  target/       # Place target images here
-  collections/  # Place image collections here
-  output/       # Generated collages
+main.go           # Wails app entry point
+app.go            # Backend logic (image processing, file dialogs, collage generation)
+models/           # Shared data structures (Pixel, AveragedImageData)
+frontend/         # Vue.js + TypeScript + Vite frontend
+  src/
+    App.vue       # Main application view
+    components/   # UI components (TitleBar, FileInput, ImagePreview)
+    style.css     # Global styles
+build/            # Build configuration and app icons
+wails.json        # Wails project configuration
 ```
-
-## Requirements
-
-- Go 1.25+
-- No external dependencies — uses only the standard library

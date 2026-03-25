@@ -1,41 +1,48 @@
 package main
 
 import (
+	"embed"
 	_ "image/jpeg"
 	_ "image/png"
-	"os"
-	"strconv"
 
-	"github.com/pranjalworm/stitch/imager"
-	"github.com/pranjalworm/stitch/models"
-	"github.com/pranjalworm/stitch/utils"
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 )
 
+//go:embed all:frontend/dist
+var assets embed.FS
+
 func main() {
+	app := NewApp()
 
-	defer utils.TrackTime("main")()
-	imageName := os.Args[1]
-	divisionFactor := os.Args[2]
-	collectionName := os.Args[3]
+	err := wails.Run(&options.App{
+		Title:     "Stitch",
+		Width:     960,
+		Height:    640,
+		MinWidth:  800,
+		MinHeight: 560,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
+		OnStartup:        app.startup,
+		Bind: []interface{}{
+			app,
+		},
+		Mac: &mac.Options{
+			TitleBar:             mac.TitleBarHiddenInset(),
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			About: &mac.AboutInfo{
+				Title:   "Stitch",
+				Message: "Photo mosaic generator",
+			},
+		},
+	})
 
-	imageDivisionFactor, err := strconv.Atoi(divisionFactor)
 	if err != nil {
-		panic(err)
+		println("Error:", err.Error())
 	}
-
-	collectionChannel := make(chan []models.AveragedImageData)
-
-	collectionPath := "./images/collections/" + collectionName + "/"
-	go imager.ReadCollection(collectionPath, collectionChannel)
-
-	targetImageChannel := make(chan *models.AveragedImageData)
-
-	go imager.ReadTargetImage(imageName, imageDivisionFactor, targetImageChannel)
-
-	targetImage := <-targetImageChannel
-
-	resultImageCollection := imager.MapCollectionToTarget(targetImage, <-collectionChannel, imageDivisionFactor)
-
-	imager.CreateCollage(resultImageCollection, collectionPath, targetImage, imageDivisionFactor)
-
 }
