@@ -10,10 +10,10 @@ defineEmits<{
   <div class="landing">
     <div class="hero">
       <div class="icon">
-        <img :src="appIcon" alt="Stitch" width="100" height="100" />
+        <img :src="appIcon" alt="Yosegi" width="100" height="100" />
       </div>
 
-      <h1 class="title">Stitch</h1>
+      <h1 class="title">Yosegi</h1>
       <p class="tagline">
         Turn any photo into a mosaic made from your own images
       </p>

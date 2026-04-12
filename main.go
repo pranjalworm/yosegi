@@ -18,7 +18,7 @@ func main() {
 	app := NewApp()
 
 	err := wails.Run(&options.App{
-		Title:     "Stitch",
+		Title:     "Yosegi",
 		Width:     960,
 		Height:    700,
 		MinWidth:  800,
@@ -36,7 +36,7 @@ func main() {
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
-				Title:   "Stitch",
+				Title:   "Yosegi",
 				Message: "Photo mosaic generator",
 			},
 		},

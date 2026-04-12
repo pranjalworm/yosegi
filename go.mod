@@ -1,4 +1,4 @@
-module github.com/pranjalworm/stitch
+module github.com/pranjalworm/yosegi
 
 go 1.25.6
 

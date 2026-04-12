@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pranjalworm/stitch/models"
+	"github.com/pranjalworm/yosegi/models"
 )
 
 func readImageFile(filePath string) (image.Image, error) {

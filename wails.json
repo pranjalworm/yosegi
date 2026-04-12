@@ -1,13 +1,12 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "Stitch",
-  "outputfilename": "Stitch",
+  "name": "Yosegi",
+  "outputfilename": "Yosegi",
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Pranjal Dubey",
-    "email": "pranjalworm@gmail.com"
+    "name": "Pranjal Dubey"
   }
 }

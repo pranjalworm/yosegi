@@ -154,7 +154,7 @@ async function generate() {
 
   <main v-else class="content">
     <div class="panel">
-      <h1 class="title">Stitch</h1>
+      <h1 class="title">Yosegi</h1>
       <p class="subtitle">Create photo mosaics from your image collection</p>
 
       <form class="form" @submit.prevent="generate">

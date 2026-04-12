@@ -1,4 +1,4 @@
-# Stitch
+# Yosegi
 
 A desktop application that creates photo mosaics — collages that resemble a target image, built from your own image collection. Powered by Go + Wails with a Vue.js frontend.
 
@@ -29,7 +29,7 @@ wails dev
 wails build
 ```
 
-The built app is output to `build/bin/Stitch.app` on macOS.
+The built app is output to `build/bin/Yosegi.app` on macOS.
 
 ## Project Structure
 
