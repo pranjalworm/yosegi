@@ -29,18 +29,18 @@
     <section class="hero">
       <div class="hero-content">
         <h1 class="hero-title">
-          Turn Any Photo Into a <span class="gradient-text">Mosaic</span> Of
-          Your Memories.
+          Turn Any Photo<br />Into a <span class="gradient-text">Mosaic</span
+          ><br />
+          Of Your Memories.
         </h1>
         <p class="hero-subtitle">
           Create stunning photo mosaics from your personal collection.
-          <br />
-          100% private.
-          <br />
-          100% offline.
-          <br />
-          100% free.
         </p>
+        <div class="hero-subtitle">
+          <div>100% private.</div>
+          <div>100% offline.</div>
+          <div>100% free.</div>
+        </div>
         <div class="hero-actions">
           <a href="#" class="btn btn-primary">Download for Desktop</a>
           <!--TODO-->
@@ -54,12 +54,16 @@
       <div class="hero-preview">
         <div class="preview-card glass-panel">
           <div class="preview-image">
+            <img src="./assets/input1.jpg" alt="App screenshot" />
             <img src="./assets/output1.jpg" alt="Mosaic preview" />
           </div>
           <div class="preview-status">
             <span class="material-symbols-outlined">blur_on</span>
             <span>Live Process</span>
-            <span class="status-count">1,420 photos matched</span>
+            <span class="status-count-wrapper">
+              <span class="status-count">Reference image</span>
+              <span class="status-count">Stitched from 1,420 photos</span>
+            </span>
           </div>
         </div>
       </div>
@@ -129,7 +133,7 @@
       <div class="mosaic-preview glass-panel">
         <div class="mosaic-image">
           <img
-            src="./assets/app-screenshot1.png"
+            src="./assets/app-screenshot1.jpg"
             alt="Mosaic creation preview"
           />
         </div>
@@ -142,7 +146,7 @@
           <div class="progress-bar">
             <div class="progress-fill" style="width: 88%"></div>
           </div>
-          <p class="mosaic-detail">Processing 12,402 local images...</p>
+          <p class="mosaic-detail">Processing 1,240 local images...</p>
         </div>
       </div>
     </section>
@@ -160,7 +164,7 @@
           <span class="material-symbols-outlined">desktop_windows</span>
           Windows 10/11
           <span class="separator">|</span>
-          <span class="material-symbols-outlined">laptop_mac</span> macOS 12+
+          <span class="material-symbols-outlined">laptop_mac</span> macOS 13+
         </p>
       </div>
     </section>

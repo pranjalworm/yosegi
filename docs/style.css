@@ -146,8 +146,15 @@ ul {
   font-size: 1.1rem;
   color: #515981;
   max-width: 480px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   line-height: 1.7;
+}
+
+.hero-subtitle > div {
+  display: block;
+  margin: 8px 0px;
+  font-size: 1.05rem;
+  font-weight: 500;
 }
 
 .hero-actions {
@@ -176,11 +183,39 @@ ul {
   box-shadow: 0 8px 40px rgba(0, 87, 189, 0.08);
 }
 
-.preview-image img {
-  width: 100%;
+.preview-image {
+  position: relative;
   height: 320px;
+}
+
+.preview-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 12px 12px 0 0;
+  animation: preview-crossfade 6s infinite;
+}
+
+.preview-image img:nth-child(2) {
+  animation-delay: -3s;
+}
+
+@keyframes preview-crossfade {
+  0%,
+  33% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  83% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .preview-status {
@@ -198,11 +233,21 @@ ul {
   color: #0057bd;
 }
 
-.status-count {
+.status-count-wrapper {
   margin-left: auto;
+  display: grid;
+}
+
+.status-count {
+  grid-area: 1 / 1;
   color: #6c759e;
   font-weight: 400;
   font-size: 0.8rem;
+  animation: preview-crossfade 6s infinite;
+}
+
+.status-count:nth-child(2) {
+  animation-delay: -3s;
 }
 
 /* ===== Use Cases ===== */
