@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { dirName } from "../utils";
+
 defineProps<{
   divisionFactor: number;
   tileSize: number;
@@ -12,11 +14,6 @@ const emit = defineEmits<{
   back: [];
   generate: [];
 }>();
-
-function dirName(path: string): string {
-  const parts = path.split("/");
-  return parts[parts.length - 1] || parts[parts.length - 2] || path;
-}
 </script>
 
 <template>

@@ -19,36 +19,42 @@ defineEmits<{
       </p>
       <div class="steps">
         <div class="step">
-          <span class="step-number">1</span>
+          <span class="step-number">01</span>
           <div>
-            <p class="step-title">Choose a collection</p>
+            <p class="step-title">Choose a photo collection</p>
             <p class="step-desc">
               A folder of images that will become the mosaic tiles
             </p>
           </div>
         </div>
         <div class="step">
-          <span class="step-number">2</span>
+          <span class="step-number">02</span>
           <div>
             <p class="step-title">Pick a reference image</p>
             <p class="step-desc">The photo you want to recreate as a mosaic</p>
           </div>
         </div>
         <div class="step">
-          <span class="step-number">3</span>
+          <span class="step-number">03</span>
           <div>
             <p class="step-title">Configure &amp; create</p>
             <p class="step-desc">
-              Adjust the grid and tile quality, then watch your mosaic come to
-              life
+              Adjust the grid and tile quality and hit Create
             </p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number">04</span>
+          <div>
+            <p class="step-title">Mosaic</p>
+            <p class="step-desc">Enjoy your mosaic.</p>
           </div>
         </div>
       </div>
 
       <button class="start-btn" @click="$emit('start')">Let's Go</button>
       <p class="privacy-note">
-        Everything runs locally on your device — your photos never leave your
+        Everything runs locally on your machine — your photos never leave your
         computer.
       </p>
     </div>
@@ -83,6 +89,10 @@ defineEmits<{
   font-weight: 700;
   letter-spacing: -0.5px;
   margin-bottom: 10px;
+  background: linear-gradient(135deg, #0057bd 0%, #6e9fff 50%, #893c92 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .tagline {

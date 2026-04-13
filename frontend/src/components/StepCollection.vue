@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { dirName } from "../utils";
+
 defineProps<{
   collectionPath: string;
   collectionCount: number;
@@ -8,11 +10,6 @@ defineEmits<{
   select: [];
   next: [];
 }>();
-
-function dirName(path: string): string {
-  const parts = path.split("/");
-  return parts[parts.length - 1] || parts[parts.length - 2] || path;
-}
 </script>
 
 <template>
@@ -66,7 +63,6 @@ function dirName(path: string): string {
     </p>
 
     <div class="step-actions">
-      <div></div>
       <button
         class="btn-primary"
         :disabled="!collectionPath"
@@ -84,5 +80,9 @@ function dirName(path: string): string {
   color: var(--accent);
   font-weight: 500;
   margin-top: -4px;
+}
+
+.step-actions {
+  justify-content: flex-end;
 }
 </style>

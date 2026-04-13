@@ -17,7 +17,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="step-body step-processing">
+  <div class="step-processing">
     <div class="image-display">
       <Transition name="fade" mode="out-in">
         <img
@@ -61,7 +61,7 @@ defineEmits<{
       <p class="time-label">Created in {{ timeTaken }}</p>
       <div class="result-actions">
         <button class="btn-primary" @click="$emit('openResult')">
-          Open Image
+          View Mosaic
         </button>
         <button class="btn-primary" @click="$emit('startOver')">
           Create Another
@@ -73,12 +73,14 @@ defineEmits<{
 
 <style scoped>
 .step-processing {
-  max-width: 640px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 640px;
   flex: 1;
   min-height: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-bottom: 0;
 }
 
 .image-display {

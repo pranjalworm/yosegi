@@ -11,7 +11,6 @@ import {
   OpenFile,
 } from "../wailsjs/go/main/App";
 import { EventsOn } from "../wailsjs/runtime/runtime";
-import TitleBar from "./components/TitleBar.vue";
 import LandingScreen from "./components/LandingScreen.vue";
 import StepCollection from "./components/StepCollection.vue";
 import StepReferenceImage from "./components/StepReferenceImage.vue";
@@ -43,7 +42,12 @@ const progressPercent = ref(0);
 const isProcessing = ref(false);
 const errorMessage = ref("");
 
-const stepLabels = ["Collection", "Reference", "Settings", "Create"];
+const stepLabels = [
+  "Photo Collection",
+  "Reference Image",
+  "Adjust & Create",
+  "Mosaic",
+];
 
 const stepIndex = computed(() => {
   const map: Record<string, number> = {
@@ -176,9 +180,7 @@ function startOver() {
     class="theme-toggle"
     style="--wails-draggable: none"
     @click="toggleTheme"
-    :title="
-      theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-    "
+    :title="theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
   >
     <svg
       v-if="theme === 'dark'"
