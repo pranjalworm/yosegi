@@ -10,6 +10,8 @@ export function GetDefaultOutputPath():Promise<string>;
 
 export function GetImagePreview(arg1:string):Promise<string>;
 
+export function OpenFile(arg1:string):Promise<void>;
+
 export function SelectCollectionDirectory():Promise<string>;
 
 export function SelectOutputDirectory():Promise<string>;

@@ -44,7 +44,7 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 12px;
+  padding-right: 40px;
 }
 
 .theme-btn {

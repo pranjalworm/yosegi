@@ -21,25 +21,26 @@ defineEmits<{
         <div class="step">
           <span class="step-number">1</span>
           <div>
-            <p class="step-title">Pick a target image</p>
-            <p class="step-desc">The photo you want to recreate as a mosaic</p>
+            <p class="step-title">Choose a collection</p>
+            <p class="step-desc">
+              A folder of images that will become the mosaic tiles
+            </p>
           </div>
         </div>
         <div class="step">
           <span class="step-number">2</span>
           <div>
-            <p class="step-title">Choose a collection</p>
-            <p class="step-desc">
-              A folder of images that will become the tiles
-            </p>
+            <p class="step-title">Pick a reference image</p>
+            <p class="step-desc">The photo you want to recreate as a mosaic</p>
           </div>
         </div>
         <div class="step">
           <span class="step-number">3</span>
           <div>
-            <p class="step-title">Generate</p>
+            <p class="step-title">Configure &amp; create</p>
             <p class="step-desc">
-              Each tile is matched by color to recreate your target
+              Adjust the grid and tile quality, then watch your mosaic come to
+              life
             </p>
           </div>
         </div>
@@ -68,7 +69,7 @@ defineEmits<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 420px;
+  max-width: 460px;
   text-align: center;
 }
 
@@ -78,21 +79,21 @@ defineEmits<{
 }
 
 .title {
-  font-size: 36px;
+  font-size: 42px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .tagline {
-  font-size: 15px;
+  font-size: 17px;
   color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 36px;
 }
 
 .privacy-note {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   opacity: 0.75;
   margin-top: 24px;
@@ -111,33 +112,33 @@ defineEmits<{
   align-items: flex-start;
   gap: 14px;
   text-align: left;
-  padding: 14px 16px;
+  padding: 16px 18px;
   background: var(--bg-secondary);
   border-radius: var(--radius);
 }
 
 .step-number {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
   color: #fff;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .step-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   margin-bottom: 2px;
 }
 
 .step-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
@@ -145,8 +146,8 @@ defineEmits<{
   background: var(--accent);
   color: #fff;
   font-weight: 500;
-  font-size: 15px;
-  padding: 12px 40px;
+  font-size: 16px;
+  padding: 14px 44px;
 }
 
 .start-btn:hover {

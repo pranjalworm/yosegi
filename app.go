@@ -8,7 +8,9 @@ import (
 	"image/jpeg"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -75,6 +77,18 @@ func (a *App) SelectOutputDirectory() (string, error) {
 		return "", err
 	}
 	return path, nil
+}
+
+// OpenFile opens a file using the OS default application.
+func (a *App) OpenFile(filePath string) error {
+	switch runtime.GOOS {
+	case "darwin":
+		return exec.Command("open", filePath).Start()
+	case "windows":
+		return exec.Command("cmd", "/c", "start", "", filePath).Start()
+	default:
+		return fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+	}
 }
 
 // CountCollectionImages returns how many valid image files are in a directory.
@@ -154,7 +168,7 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 	logger.Printf("=== Run started at %s ===", start.Format(time.RFC3339))
 	logger.Printf("divisionFactor=%d, collection=%s", divisionFactor, collectionPath)
 
-	wailsRuntime.EventsEmit(a.ctx, "progress", "Reading target image...")
+	wailsRuntime.EventsEmit(a.ctx, "progress", "Reading reference image...")
 
 	stepStart := time.Now()
 	targetImg, err := readImageFile(targetPath)
@@ -180,7 +194,7 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 		return nil, fmt.Errorf("no valid images found in collection directory")
 	}
 
-	wailsRuntime.EventsEmit(a.ctx, "progress", "Matching images to target grid...")
+	wailsRuntime.EventsEmit(a.ctx, "progress", "Matching tiles to reference...")
 
 	stepStart = time.Now()
 	resultNames := mapCollectionToTarget(&targetData, collectionData, divisionFactor)
@@ -217,7 +231,7 @@ func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDi
 	logger.Printf("  TOTAL:                  %s", elapsed)
 	logger.Println()
 
-	wailsRuntime.EventsEmit(a.ctx, "progress", "Done!")
+	wailsRuntime.EventsEmit(a.ctx, "progress", "Preparing for the grand reveal...")
 
 	return &GenerateResult{
 		OutputPath: outputPath,
