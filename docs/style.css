@@ -79,17 +79,6 @@ ul {
   font-size: 0.85rem;
 }
 
-.btn-ghost {
-  background: transparent;
-  color: #0057bd;
-  padding: 12px 28px;
-  border: 1px solid rgba(0, 87, 189, 0.3);
-}
-
-.btn-ghost:hover {
-  background: rgba(0, 87, 189, 0.06);
-}
-
 .btn-light {
   background: #ffffff;
   color: #0057bd;
@@ -159,8 +148,7 @@ ul {
 }
 
 .hero-subtitle > div {
-  display: block;
-  margin: 8px 0px;
+  margin: 8px 0;
   font-size: 1.05rem;
   font-weight: 500;
 }
@@ -296,21 +284,13 @@ ul {
   animation-delay: -3s;
 }
 
-.step-card:nth-child(2) .step-number,
-.step-card:nth-child(3) .step-number {
-  animation-delay: -6s;
-}
-
-.step-card:nth-child(3) .step-number {
-  animation-delay: -3s;
-}
+.step-card:nth-child(2) .step-number { animation-delay: -6s; }
+.step-card:nth-child(3) .step-number { animation-delay: -3s; }
 
 @keyframes step-card-glow {
-  0%      { box-shadow: 0 6px 28px rgba(0, 87, 189, 0.2); }
-  22%     { box-shadow: 0 6px 28px rgba(0, 87, 189, 0.2); }
-  33%     { box-shadow: none; }
-  89%     { box-shadow: none; }
-  100%    { box-shadow: 0 6px 28px rgba(0, 87, 189, 0.2); }
+  0%, 22%    { box-shadow: 0 6px 28px rgba(0, 87, 189, 0.2); }
+  33%, 89%   { box-shadow: none; }
+  100%       { box-shadow: 0 6px 28px rgba(0, 87, 189, 0.2); }
 }
 
 .step-number {
@@ -324,11 +304,9 @@ ul {
 }
 
 @keyframes step-number-glow {
-  0%      { color: #0057bd; }
-  22%     { color: #0057bd; }
-  33%     { color: rgba(0, 87, 189, 0.15); }
-  89%     { color: rgba(0, 87, 189, 0.15); }
-  100%    { color: #0057bd; }
+  0%, 22%    { color: #0057bd; }
+  33%, 89%   { color: rgba(0, 87, 189, 0.15); }
+  100%       { color: #0057bd; }
 }
 
 .step-card h4 {
@@ -349,7 +327,6 @@ ul {
 .mosaic-preview {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
-  gap: 0;
   overflow: hidden;
   box-shadow: 0 6px 32px rgba(0, 87, 189, 0.06);
 }
@@ -377,11 +354,9 @@ ul {
 }
 
 @keyframes step-show {
-  0%      { opacity: 1; }
-  22%     { opacity: 1; }
-  33%     { opacity: 0; }
-  89%     { opacity: 0; }
-  100%    { opacity: 1; }
+  0%, 22%    { opacity: 1; }
+  33%, 89%   { opacity: 0; }
+  100%       { opacity: 1; }
 }
 
 .steps-panel {
@@ -506,17 +481,8 @@ ul {
     font-size: 2.4rem;
   }
 
-  .use-cases-grid,
-  .steps-grid {
-    grid-template-columns: 1fr;
-  }
-
   .mosaic-preview {
     grid-template-columns: 1fr;
-  }
-
-  .mosaic-image img {
-    height: 220px;
   }
 
   .cta-inner h2 {
