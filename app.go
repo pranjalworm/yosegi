@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -18,7 +19,8 @@ import (
 )
 
 type App struct {
-	ctx context.Context
+	ctx   context.Context
+	isDev bool
 }
 
 func NewApp() *App {
@@ -27,6 +29,7 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	a.isDev = wailsRuntime.Environment(ctx).BuildType == "dev"
 }
 
 type GenerateResult struct {
@@ -157,12 +160,17 @@ func (a *App) GetImagePreview(filePath string) (string, error) {
 
 // GenerateCollage runs the full mosaic generation pipeline.
 func (a *App) GenerateCollage(targetPath string, collectionPath string, outputDir string, divisionFactor int, tileSize int) (*GenerateResult, error) {
-	logFile, err := os.OpenFile(filepath.Join(outputDir, "yosegi_perf.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create log file: %w", err)
+	var logger *log.Logger
+	if a.isDev {
+		logFile, err := os.OpenFile(filepath.Join(outputDir, "yosegi_perf.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create log file: %w", err)
+		}
+		defer logFile.Close()
+		logger = log.New(logFile, "", 0)
+	} else {
+		logger = log.New(io.Discard, "", 0)
 	}
-	defer logFile.Close()
-	logger := log.New(logFile, "", 0)
 
 	start := time.Now()
 	logger.Printf("=== Run started at %s ===", start.Format(time.RFC3339))
