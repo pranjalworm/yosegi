@@ -18,6 +18,10 @@ export function GetImagePreview(arg1) {
   return window['go']['main']['App']['GetImagePreview'](arg1);
 }
 
+export function OpenFile(arg1) {
+  return window['go']['main']['App']['OpenFile'](arg1);
+}
+
 export function SelectCollectionDirectory() {
   return window['go']['main']['App']['SelectCollectionDirectory']();
 }
