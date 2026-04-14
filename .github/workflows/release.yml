@@ -1,0 +1,79 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-13
+            platform: darwin/universal
+            artifact-name: Yosegi-macOS
+            artifact-file: Yosegi-macOS.zip
+          - os: windows-latest
+            platform: windows/amd64
+            artifact-name: Yosegi-Windows
+            artifact-file: Yosegi-Windows.zip
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
+
+      - name: Build
+        run: wails build -platform ${{ matrix.platform }}
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: ditto -c -k --keepParent build/bin/Yosegi.app Yosegi-macOS.zip
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path build/bin/Yosegi.exe -DestinationPath Yosegi-Windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ${{ matrix.artifact-file }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        run: echo "version=$(jq -r .version wails.json)" >> $GITHUB_OUTPUT
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}-${{ github.run_number }}
+          name: v${{ steps.ver.outputs.version }}
+          body: Built from commit ${{ github.sha }}
+          files: artifacts/*
